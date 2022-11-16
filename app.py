@@ -35,11 +35,13 @@ Output: None
 def sign_in():
     username = input("Username: ")
     password = input("Password: ")
-    query = (f'''SELECT username FROM users WHERE username = '{username}' AND password = '{password}';''')
+    query = (f'''SELECT is_supplier FROM users WHERE username = '{username}' AND password = '{password}';''')
     login_attempt = do_query(query, True)
     if len(login_attempt) == 1:
         print("Successfull Login")
-        logged_in(username)
+        is_supplier = login_attempt[0][0]
+        logged_in(username, is_supplier)
+
     else:
         print("username and/or password are incorrect, returning to menue")
         welcome()
@@ -78,8 +80,43 @@ welcomes user once logged in
 input:username
 output:
 '''
-def logged_in(username):
-    print("You are logged in")
+def logged_in(username,is_supplier):
+    choice = 0
+    if is_supplier:
+        while choice != 4:
+            print("You are logged in")
+            print("(1) to veiw / change balance")
+            print("(2) add or resupply items")
+            print("(3) Veiw your items and history ")
+            print("(4) to exit")
+            choice = int(input("=> "))
+            if choice == 1:
+                sign_in()
+            elif choice == 2:
+                create_account()
+            elif choice == 3:
+                exit()
+            else:
+                exit()
+    else:
+        while choice != 4:
+            print("You are logged in")
+            print("(1) to veiw / change balance")
+            print("(2) purchase some new stuff")
+            print("(3 veiw your transaction history")
+            choice = int(input("=> "))
+            if choice == 1:
+                sign_in()
+            elif choice == 2:
+                create_account()
+            elif choice == 3:
+                exit()
+       
+    exit()
+
+
+
+
 
 
 '''

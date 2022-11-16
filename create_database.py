@@ -20,7 +20,7 @@ def to_sqllite(u_file, i_file):
         users = pd.read_csv(u_file)
         inventory = pd.read_csv(i_file)
         
-        users.to_sql('Users', connection, if_exists='replace', index=False)
+        users.to_sql('Users', connection, if_exists='replace', index=False, dtype={"username": "TEXT PRIMARY KEY", "password": "TEXT NOT NULL", "credit": "INTEGER NOT NULL", "is_supplier": "BOOL NOT NULL"})
         inventory.to_sql('Inventory', connection, if_exists='replace', index=False)
         print("Database loaded...")
         connection.close()
