@@ -10,7 +10,7 @@ def to_sqllite(u_file, i_file):
     try:
         connection = sqlite3.connect(db)
         cur = connection.cursor()
-        create_u_table = "CREATE TABLE IF NOT EXISTS Users(user_id INTEGER, username TEXT PRIMARY KEY, password TEXT NOT NULL, credit INTEGER NOT NULL, is_supplier BOOL NOT NULL);"
+        create_u_table = "CREATE TABLE IF NOT EXISTS Users(username TEXT PRIMARY KEY, password TEXT NOT NULL, credit INTEGER NOT NULL, is_supplier BOOL NOT NULL);"
         create_i_table = "CREATE TABLE IF NOT EXISTS Inventory(item_id INTEGER PRIMARY KEY, item_name TEXT NOT NULL, cost INTEGER NOT NULL, quantity INTEGER NOT NULL, supplier TEXT NOT NULL);"
         create_h_table = "CREATE TABLE IF NOT EXISTS History(order_id INTEGER PRIMARY KEY, item_id INTEGER NOT NULL, date_time TEXT NOT NULL, user TEXT NOT NULL, purchased INTEGER, added INTEGER)"
 
