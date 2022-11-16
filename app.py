@@ -34,7 +34,7 @@ def sign_in():
     login_attempt = do_query(query, True)
     if len(login_attempt) == 1:
         print("Successfull Login")
-        logged_in()
+        logged_in(username)
     else:
         print("username and/or password are incorrect, returning to menue")
         welcome()
