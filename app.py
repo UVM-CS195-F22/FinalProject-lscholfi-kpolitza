@@ -67,7 +67,7 @@ def create_account():
         is_supplier = True
     query = (f'''INSERT INTO users(username,password,credit,is_supplier) VALUES('{username}','{password}','0','{is_supplier}');''')
     success = do_query(query, False)
-    if success == 1:
+    if success:
         print("account successfully created, returning you to the main menue. You may now log into your account")
         welcome()
     else:
@@ -91,7 +91,7 @@ def logged_in(username,is_supplier):
             print("(4) to exit")
             choice = int(input("=> "))
             if choice == 1:
-                manage_balance()
+                manage_balance(username)
             elif choice == 2:
                 create_account()
             elif choice == 3:
@@ -100,18 +100,79 @@ def logged_in(username,is_supplier):
                 exit()
         else:
             print("You are logged in")
-            print("(1) to veiw / change balance")
-            print("(2) purchase some new stuff")
+            print("(1) to manage balance")
+            print("(2) purchase new items")
             print("(3 veiw your transaction history")
+            print("(4) to exit")
             choice = int(input("=> "))
             if choice == 1:
-                sign_in()
+                manage_balance(username)
             elif choice == 2:
-                create_account()
+                shop(username)
             elif choice == 3:
+                history(username)
+            else:
                 exit()
        
     exit()
+
+'''
+allows user to veiw and change their balance
+input: Username
+Output: None
+'''
+def manage_balance(username):
+    query = (f'''SELECT credit FROM users WHERE username = '{username}';''')
+    balance = do_query(query, True)
+    balance = int(balance[0][0])
+    print(f"Your current balance is: {balance}")
+    print("(1) to add new funds to your balance")
+    print("(2) to withdrawl funds from balance")
+    print("(3) to exit")
+    choice = int(input("=>"))
+    if choice == 1:
+        amount = int(input("how much would you like to add: "))
+        while amount <= 0:
+            print("You must add more than 0")
+            amount = int(input("how much would you like to add: "))
+        print("Simulating Third party credit withdrawls....")
+        balance += amount
+    elif choice == 2:
+        amount = int(input("how much would you like to withdraw: "))
+        while amount > balance:
+            print("You dont have enough funds")
+            amount = int(input("how much would you like to withdraw: "))
+        else:
+            balance -= amount
+    query = (f'''UPDATE users
+                    SET credit = '{balance}'
+                    WHERE username = '{username}'
+                    ''')
+    success = do_query(query,False)
+    if success:
+        print(f"Your balance is: {balance}")
+        print(f"Returning you to the menue")
+    else:
+        print("an error has occured while changing balance amount, returning you to menue")
+
+
+'''
+allows user to veiw online inventory and purchase items
+input: Username
+output: None
+'''
+def shop(username):
+    #TODO: implement this
+    return 0
+
+'''
+allows suer to veiw their transaction history
+input: Username
+output: None
+'''
+def history(username):
+    #TODO: implement this
+    return 0
 
 
 
@@ -130,10 +191,10 @@ def do_query(query, want_output):
         if want_output:
             return output
         else:
-            return 1
+            return True
     except sqlite3.Error:
         print("an error occured while attempting to perform a query")
-        return 0
+        return False
 
 
 
