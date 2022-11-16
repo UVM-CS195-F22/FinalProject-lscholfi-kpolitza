@@ -95,7 +95,4 @@ def do_query(query, want_output):
         return 0
 
 
-
-
-
 welcome()
