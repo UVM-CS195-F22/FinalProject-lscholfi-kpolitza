@@ -12,14 +12,19 @@ input: None
 Output None
 '''
 def welcome():
+    print(do_query("SELECT * FROM users", True))
     print("Welcome to the the super store")
     print("(1) to sign in")
     print("(2) to Create an acount")
+    print("(3 to exit")
     choice = int(input("=> "))
     if choice == 1:
         sign_in()
     elif choice == 2:
         create_account()
+    elif choice == 3:
+        exit()
+
 
 
 '''
