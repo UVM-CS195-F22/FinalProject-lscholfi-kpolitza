@@ -26,6 +26,23 @@ def welcome():
         exit()
 
 
+'''
+allows user to restock existing items or add a new one
+input: None
+output: None
+'''
+def resupply():
+    print("(1) to restock product")
+    print("(2) to deliver a new itme")
+    choice = int(input("=> "))
+    
+    if choice == 1:
+        #restock existing product
+        
+    else:
+        #add a new product
+        pass
+
 
 '''
 alows user to sign into an already created account
@@ -82,8 +99,8 @@ output:
 '''
 def logged_in(username,is_supplier):
     choice = 0
-    if is_supplier:
-        while choice != 4:
+    while choice != 4:
+        if is_supplier:
             print("You are logged in")
             print("(1) to veiw / change balance")
             print("(2) add or resupply items")
@@ -93,13 +110,12 @@ def logged_in(username,is_supplier):
             if choice == 1:
                 sign_in()
             elif choice == 2:
-                create_account()
+                resupply()
             elif choice == 3:
                 exit()
             else:
                 exit()
-    else:
-        while choice != 4:
+        else:
             print("You are logged in")
             print("(1) to veiw / change balance")
             print("(2) purchase some new stuff")
