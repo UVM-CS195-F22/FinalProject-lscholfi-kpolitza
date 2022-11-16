@@ -82,24 +82,23 @@ output:
 '''
 def logged_in(username,is_supplier):
     choice = 0
-    if is_supplier:
-        while choice != 4:
+    while choice != 4:
+        if is_supplier:
             print("You are logged in")
-            print("(1) to veiw / change balance")
+            print("(1) to manage your balance")
             print("(2) add or resupply items")
             print("(3) Veiw your items and history ")
             print("(4) to exit")
             choice = int(input("=> "))
             if choice == 1:
-                sign_in()
+                manage_balance()
             elif choice == 2:
                 create_account()
             elif choice == 3:
                 exit()
             else:
                 exit()
-    else:
-        while choice != 4:
+        else:
             print("You are logged in")
             print("(1) to veiw / change balance")
             print("(2) purchase some new stuff")
@@ -135,6 +134,7 @@ def do_query(query, want_output):
     except sqlite3.Error:
         print("an error occured while attempting to perform a query")
         return 0
+
 
 
 welcome()
