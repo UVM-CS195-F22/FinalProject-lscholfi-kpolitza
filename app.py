@@ -31,16 +31,38 @@ allows user to restock existing items or add a new one
 input: None
 output: None
 '''
-def resupply():
+def resupply(username):
     print("(1) to restock product")
-    print("(2) to deliver a new itme")
+    print("(2) to deliver a new item")
     choice = int(input("=> "))
+    quantity = 0
     
     if choice == 1:
         #restock existing product
-        
+        owned_products = cur.execute(f"SELECT Inventory.item_name, Inventory.quantity FROM \
+                                     (Inventory INNER JOIN Users ON Users.username = Inventory.supplier) WHERE Inventory.supplier = Users.username \
+                                     AND Users.username = '{username}';").fetchall()
+        print(f"--- Products supplied by '{username}' ---")
+        for each in owned_products:
+            print(f"Name: '{each[0]}' Quantity: '{each[1]}'")
+        while choice == 1:
+            print("Enter the name of the item to restock")
+            item = str(input("=> "))
+            for each in owned_products:
+                if(each[0] == item):
+                    quantity = int(each[1])
+            print("Enter number being restocked")
+            num = input("=> ")
+            total = int(quantity) + int(num)
+            cur.execute("UPDATE Inventory SET quantity = " + str(total) + " WHERE item_name = '" + item + "';")
+            conn.commit()
+            print("Product restocked")
+            print("(1) to restock another item")
+            print("(2) to exit")
+            choice = int(input("=> "))
     else:
         #add a new product
+        
         pass
 
 
@@ -110,7 +132,7 @@ def logged_in(username,is_supplier):
             if choice == 1:
                 sign_in()
             elif choice == 2:
-                resupply()
+                resupply(username)
             elif choice == 3:
                 exit()
             else:
