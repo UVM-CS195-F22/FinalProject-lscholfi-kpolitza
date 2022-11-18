@@ -5,6 +5,7 @@ import sqlite3
 #connects to db
 conn = sqlite3.connect('super_store.db')
 cur = conn.cursor()
+TEST = True
 
 '''
 welcomes user to superstore website
@@ -91,7 +92,7 @@ def logged_in(username,is_supplier):
             print("(4) to exit")
             choice = int(input("=> "))
             if choice == 1:
-                manage_balance(username)
+                manage_balance(username,is_supplier)
             elif choice == 2:
                 create_account()
             elif choice == 3:
@@ -106,9 +107,9 @@ def logged_in(username,is_supplier):
             print("(4) to exit")
             choice = int(input("=> "))
             if choice == 1:
-                manage_balance(username)
+                manage_balance(username,is_supplier)
             elif choice == 2:
-                shop(username)
+                shop(username,is_supplier)
             elif choice == 3:
                 history(username)
             else:
@@ -121,11 +122,10 @@ allows user to veiw and change their balance
 input: Username
 Output: None
 '''
-def manage_balance(username):
-    query = (f'''SELECT credit FROM users WHERE username = '{username}';''')
-    balance = do_query(query, True)
-    balance = int(balance[0][0])
-    print(f"Your current balance is: {balance}")
+def manage_balance(username, is_supplier):
+    user_balance = get_user_balance(username)
+
+    print(f"Your current balance is: {user_balance}")
     print("(1) to add new funds to your balance")
     print("(2) to withdrawl funds from balance")
     print("(3) to exit")
@@ -136,24 +136,26 @@ def manage_balance(username):
             print("You must add more than 0")
             amount = int(input("how much would you like to add: "))
         print("Simulating Third party credit withdrawls....")
-        balance += amount
+        user_balance += amount
     elif choice == 2:
         amount = int(input("how much would you like to withdraw: "))
-        while amount > balance:
+        while amount > user_balance:
             print("You dont have enough funds")
             amount = int(input("how much would you like to withdraw: "))
         else:
-            balance -= amount
+            user_balance -= amount
     query = (f'''UPDATE users
-                    SET credit = '{balance}'
+                    SET credit = '{user_balance}'
                     WHERE username = '{username}'
                     ''')
     success = do_query(query,False)
     if success:
-        print(f"Your balance is: {balance}")
+        print(f"Your balance is: {user_balance}")
         print(f"Returning you to the menue")
     else:
         print("an error has occured while changing balance amount, returning you to menue")
+
+    
 
 
 '''
@@ -161,8 +163,51 @@ allows user to veiw online inventory and purchase items
 input: Username
 output: None
 '''
-def shop(username):
-    #TODO: implement this
+def shop(username,is_supplier):
+    user_balance = get_user_balance(username)
+
+    query = f'''SELECT * FROM Inventory;'''
+    inventory = do_query(query, True)
+
+    print("| Item number |            Item name            | price | quantity |   Supplier   |")
+    print("|---------------------------------------------------------------------------------|")
+    for item in inventory:
+        print(f'''|{item[0]:9}    | {item[1]:^30}  | {item[2]:5} | {item[3]:4}     | {item[4]:^12} |''')
+        print("|---------------------------------------------------------------------------------|")
+    print("Type the item number of the item you would like to purchase")
+    item = int(input("=>"))
+    item -= 1
+    print("How many do you want to purchase?")
+    quantity = int(input("=>"))
+    if float(inventory[item][3]) < quantity:
+            print("there are not enough items in stock, returning to menue")
+            logged_in(username,is_supplier)
+    total_cost = float(inventory[item][2]) * quantity
+    if total_cost > user_balance:
+            print("You dont have sufficient funds, returning to menue")
+            logged_in(username,is_supplier)
+    user_balance -= total_cost
+    print(f"confirm you would like to buy {quantity} {inventory[item][1]} for a total of {total_cost}")
+    print("(1) to confirm purchase")
+    print("(2) to cancel purchase")
+    confirmation = int(input("=>"))
+    if confirmation == 1:
+        print("processing purchase...")
+        user_query = f'''UPDATE users SET credit = '{user_balance}' WHERE username = '{username}';'''
+        history_query = f'''INSERT INTO History(item_id,date_time, user, purchased) VALUES('{item}', date('now','localtime'),'{username}','{quantity}');'''
+        #TODO: get code from kody for updating inventory item quantity
+        inventory_query = f''';'''
+
+        print(do_query(history_query,False))
+        print(print(do_query(user_query,False)))
+
+    else:
+        print("canceling purchase, returning you to main menue")
+        logged_in(username,is_supplier)
+
+
+    
+
     return 0
 
 '''
@@ -175,7 +220,10 @@ def history(username):
     return 0
 
 
-
+def get_user_balance(username):
+    query = (f'''SELECT credit FROM users WHERE username = '{username}';''')
+    balance = do_query(query, True)
+    return (int(balance[0][0]))
 
 
 
@@ -192,10 +240,13 @@ def do_query(query, want_output):
             return output
         else:
             return True
-    except sqlite3.Error:
+    except sqlite3.Error as er:
         print("an error occured while attempting to perform a query")
+        print(er)
         return False
 
-
+if TEST:
+    print(do_query("SELECT * FROM History", True))
+    print(do_query("SELECT * FROM Users WHERE username = 'a';", True))
 
 welcome()

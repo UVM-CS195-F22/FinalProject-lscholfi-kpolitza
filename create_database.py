@@ -16,6 +16,7 @@ def to_sqllite(u_file, i_file):
 
         cur.execute(create_u_table)
         cur.execute(create_i_table)
+        cur.execute(create_h_table)
 
         users = pd.read_csv(u_file)
         inventory = pd.read_csv(i_file)
