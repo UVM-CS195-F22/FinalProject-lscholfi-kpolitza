@@ -183,6 +183,8 @@ def shop(username,is_supplier):
             print("there are not enough items in stock, returning to menue")
             logged_in(username,is_supplier)
     total_cost = float(inventory[item][2]) * quantity
+    new_quantity = (int(inventory[item][3]) - quantity)
+    print(new_quantity)
     if total_cost > user_balance:
             print("You dont have sufficient funds, returning to menue")
             logged_in(username,is_supplier)
@@ -195,11 +197,15 @@ def shop(username,is_supplier):
         print("processing purchase...")
         user_query = f'''UPDATE users SET credit = '{user_balance}' WHERE username = '{username}';'''
         history_query = f'''INSERT INTO History(item_id,date_time, user, purchased) VALUES('{item}', date('now','localtime'),'{username}','{quantity}');'''
-        #TODO: get code from kody for updating inventory item quantity
-        inventory_query = f''';'''
-
-        print(do_query(history_query,False))
-        print(print(do_query(user_query,False)))
+        inventory_query = ("UPDATE Inventory SET quantity = " + str(new_quantity) + " WHERE item_id = '" + str(item+1) + "';")
+        print(inventory_query)
+        query_h = do_query(history_query,False)
+        query_u = do_query(user_query,False)
+        query_i = do_query(inventory_query, False)
+        if query_h and query_u and query_i:
+            print("Purchase successfull, returning to menue")
+        else:
+            print("Purchase fail, returning to menue")
 
     else:
         print("canceling purchase, returning you to main menue")
@@ -242,11 +248,14 @@ def do_query(query, want_output):
             return True
     except sqlite3.Error as er:
         print("an error occured while attempting to perform a query")
-        print(er)
+        if TEST:
+            print(er)
         return False
 
 if TEST:
     print(do_query("SELECT * FROM History", True))
     print(do_query("SELECT * FROM Users WHERE username = 'a';", True))
+    shop('a',True)
+
 
 welcome()
