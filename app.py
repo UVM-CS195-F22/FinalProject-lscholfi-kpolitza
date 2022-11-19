@@ -5,7 +5,7 @@ import sqlite3
 #connects to db
 conn = sqlite3.connect('super_store.db')
 cur = conn.cursor()
-TEST = True
+TEST = False
 
 '''
 welcomes user to superstore website
@@ -147,7 +147,7 @@ def logged_in(username,is_supplier):
             elif choice == 2:
                 resupply(username)
             elif choice == 3:
-                exit()
+                history(username)
             else:
                 exit()
         else:
@@ -273,8 +273,11 @@ input: Username
 output: None
 '''
 def history(username):
-    #TODO: implement this
-    return 0
+    query = (f"SELECT History.order_id, History.date_time, Inventory.item_name, History.purchased FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
+    hist = do_query(query, True)
+    print("--- Purchase History ---")
+    for each in hist:
+        print(each)
 
 
 def get_user_balance(username):
