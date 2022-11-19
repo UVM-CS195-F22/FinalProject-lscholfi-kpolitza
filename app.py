@@ -16,7 +16,7 @@ def welcome():
     print("Welcome to the the super store")
     print("(1) to sign in")
     print("(2) to Create an acount")
-    print("(3 to exit")
+    print("(3) to exit")
     choice = int(input("=> "))
     if choice == 1:
         sign_in()
@@ -36,21 +36,21 @@ def resupply(username):
     print("(2) to deliver a new item")
     choice = int(input("=> "))
     quantity = 0
+    owned_products = cur.execute(f"SELECT Inventory.item_id, Inventory.item_name, Inventory.quantity FROM \
+                                     (Inventory INNER JOIN Users ON Users.username = Inventory.supplier) WHERE Inventory.supplier = Users.username \
+                                     AND Users.username = '{username}';").fetchall()
+    print(f"--- Products supplied by '{username}' ---")
+    for each in owned_products:
+        print(f"ID: '{each[0]}' Name: '{each[1]}' Quantity: '{each[2]}'")
     
     if choice == 1:
         #restock existing product
-        owned_products = cur.execute(f"SELECT Inventory.item_name, Inventory.quantity FROM \
-                                     (Inventory INNER JOIN Users ON Users.username = Inventory.supplier) WHERE Inventory.supplier = Users.username \
-                                     AND Users.username = '{username}';").fetchall()
-        print(f"--- Products supplied by '{username}' ---")
-        for each in owned_products:
-            print(f"Name: '{each[0]}' Quantity: '{each[1]}'")
         while choice == 1:
-            print("Enter the name of the item to restock")
+            print("Enter the ID of the item to restock")
             item = str(input("=> "))
             for each in owned_products:
                 if(each[0] == item):
-                    quantity = int(each[1])
+                    quantity = int(each[2])
             print("Enter number being restocked")
             num = input("=> ")
             total = int(quantity) + int(num)
@@ -62,8 +62,20 @@ def resupply(username):
             choice = int(input("=> "))
     else:
         #add a new product
-        
-        pass
+        while choice == 2:
+            print("Enter the name of the item being added")
+            name = str(input("=> "))
+            print("Enter the quantity being added")
+            quantity = input("=> ")
+            print("Enter the price of each unit")
+            cost = input("=> ")
+            query = f"INSERT INTO Inventory (item_name, cost, quantity, supplier) VALUES ('" + name + "', " + str(cost) + ", " + str(quantity) + ", '" + str(username) + "');"
+            cur.execute(query)
+            conn.commit()
+            print("Product added")
+            print("(2) to add another item")
+            print("(3) to exit")
+            choice = int(input("=> "))
 
 
 '''
@@ -141,7 +153,7 @@ def logged_in(username,is_supplier):
             print("You are logged in")
             print("(1) to veiw / change balance")
             print("(2) purchase some new stuff")
-            print("(3 veiw your transaction history")
+            print("(3) view your transaction history")
             choice = int(input("=> "))
             if choice == 1:
                 sign_in()
