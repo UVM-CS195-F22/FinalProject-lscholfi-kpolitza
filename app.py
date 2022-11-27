@@ -1,12 +1,25 @@
 #imports
 import sqlite3
+from flask import Flask, render_template, request
 
+app = Flask(__name__)
+
+#to run use
+#python -m flask run
 
 #connects to db
 conn = sqlite3.connect('super_store.db')
 cur = conn.cursor()
-TEST = True
+TEST = False
 
+@app.route('/',methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        username_form = request.form.get("username_form", None)
+        username_form = request.form.get("username_form", None)
+        return render_template('login.hmtl')
+
+    return render_template('login.hmtl')
 '''
 welcomes user to superstore website
 input: None
@@ -258,4 +271,4 @@ if TEST:
     shop('a',True)
 
 
-welcome()
+#welcome()

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Landing{% endblock %}
+
+{% block content %}
+
+<div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
+  <p class="lead">Enter credentials below to log in</p>
+
+  <form method="POST">
+    <div><label><input type="number" name="username_form" value="" step="1" pattern="\d+" /></label></div>
+
+    <input type="submit" value="Submit">
+  </form>
+
+</div>
+
+{% endblock %}
