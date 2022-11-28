@@ -30,7 +30,7 @@ def to_sqllite(u_file, i_file):
         print(e)
 
 def main():
-    to_sqllite("user_data.csv", "item_data.csv")
+    to_sqllite("data\\user_data.csv", "data\\item_data.csv")
     print("Database saved...")
     
 main()
