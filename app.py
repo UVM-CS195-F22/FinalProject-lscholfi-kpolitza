@@ -18,9 +18,8 @@ def index():
     if request.method == 'POST':
         username_form = request.form.get("username_form", None)
         username_form = request.form.get("username_form", None)
-        return render_template('login.hmtl')
-
-    return render_template('login.hmtl')
+        return render_template('login.html')
+    return render_template('login.html')
 
 
 '''
