@@ -12,6 +12,7 @@ conn = sqlite3.connect('super_store.db')
 cur = conn.cursor()
 TEST = False
 
+
 @app.route('/',methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -20,6 +21,8 @@ def index():
         return render_template('login.hmtl')
 
     return render_template('login.hmtl')
+
+
 '''
 welcomes user to superstore website
 input: None
@@ -30,7 +33,7 @@ def welcome():
     print("Welcome to the the super store")
     print("(1) to sign in")
     print("(2) to Create an acount")
-    print("(3 to exit")
+    print("(3) to exit")
     choice = int(input("=> "))
     if choice == 1:
         sign_in()
@@ -39,6 +42,57 @@ def welcome():
     elif choice == 3:
         exit()
 
+
+'''
+allows user to restock existing items or add a new one
+input: None
+output: None
+'''
+def resupply(username):
+    print("(1) to restock product")
+    print("(2) to deliver a new item")
+    choice = int(input("=> "))
+    quantity = 0
+    owned_products = cur.execute(f"SELECT Inventory.item_id, Inventory.item_name, Inventory.quantity FROM \
+                                     (Inventory INNER JOIN Users ON Users.username = Inventory.supplier) WHERE Inventory.supplier = Users.username \
+                                     AND Users.username = '{username}';").fetchall()
+    print(f"--- Products supplied by '{username}' ---")
+    for each in owned_products:
+        print(f"ID: '{each[0]}' Name: '{each[1]}' Quantity: '{each[2]}'")
+    
+    if choice == 1:
+        #restock existing product
+        while choice == 1:
+            print("Enter the ID of the item to restock")
+            item = str(input("=> "))
+            for each in owned_products:
+                if(each[0] == item):
+                    quantity = int(each[2])
+            print("Enter number being restocked")
+            num = input("=> ")
+            total = int(quantity) + int(num)
+            cur.execute("UPDATE Inventory SET quantity = " + str(total) + " WHERE item_name = '" + item + "';")
+            conn.commit()
+            print("Product restocked")
+            print("(1) to restock another item")
+            print("(2) to exit")
+            choice = int(input("=> "))
+    else:
+        #add a new product
+        while choice == 2:
+            print("Enter the name of the item being added")
+            name = str(input("=> "))
+            print("Enter the quantity being added")
+            quantity = input("=> ")
+            print("Enter the price of each unit")
+            cost = input("=> ")
+            query = f"INSERT INTO Inventory (item_name, cost, quantity, supplier) VALUES ('" + name + "', " + str(cost) + ", " + str(quantity) + ", '" + str(username) + "');"
+            cur.execute(query)
+            conn.commit()
+            print("Product added")
+            print("(2) to add another item")
+            print("(3) to exit")
+            choice = int(input("=> "))
 
 
 '''
@@ -107,9 +161,9 @@ def logged_in(username,is_supplier):
             if choice == 1:
                 manage_balance(username,is_supplier)
             elif choice == 2:
-                create_account()
+                resupply(username)
             elif choice == 3:
-                exit()
+                history(username)
             else:
                 exit()
         else:
@@ -235,8 +289,11 @@ input: Username
 output: None
 '''
 def history(username):
-    #TODO: implement this
-    return 0
+    query = (f"SELECT History.order_id, History.date_time, Inventory.item_name, History.purchased FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
+    hist = do_query(query, True)
+    print("--- Purchase History ---")
+    for each in hist:
+        print(each)
 
 
 def get_user_balance(username):
