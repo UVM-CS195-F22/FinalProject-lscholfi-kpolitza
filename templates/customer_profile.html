@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Landing{% endblock %}
+
+{% block content %}
+
+<div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
+  <p class="lead">Customer Logged in successfull</p>
+  <p>{username}</p>
+
+  <form method="POST">
+    <div><label>Username <input type="text" name="username_form" value="" step="1" pattern="\d+" /></label></div>
+    <div><label>Password <input type="text" name="password_form" value="" step="1" pattern="\d+" /></label></div>
+
+    <input type="submit" value="Submit">
+  </form>
+
+</div>
+
+{% endblock %}

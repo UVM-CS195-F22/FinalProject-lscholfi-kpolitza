@@ -1,6 +1,9 @@
 #imports
 import sqlite3
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect, session
+
+conn = sqlite3.connect('super_store.db', check_same_thread=False)
+cur = conn.cursor()
 
 app = Flask(__name__)
 
@@ -8,18 +11,54 @@ app = Flask(__name__)
 #python -m flask run
 
 #connects to db
-conn = sqlite3.connect('super_store.db')
-cur = conn.cursor()
-TEST = False
+TEST = True
 
 
 @app.route('/',methods=['GET', 'POST'])
-def index():
+def login():
     if request.method == 'POST':
-        username_form = request.form.get("username_form", None)
-        username_form = request.form.get("username_form", None)
-        return render_template('login.html')
+        username = request.form.get("username_form", None)
+        password = request.form.get("password_form", None)
+
+        query = (f'''SELECT is_supplier FROM users WHERE username = '{username}' AND password = '{password}';''')
+        login_attempt = do_query(query, True)
+        print("----------------")
+        print(login_attempt)
+        print("----------------")
+
+        if len(login_attempt) == 1:
+            print("Successfull Login")
+            is_supplier = login_attempt[0][0]  
+            #TODO: get the session variables to work 
+            #session['username'] = username
+            #session['is_supplier'] = is_supplier
+             
+            return redirect(url_for('logged_in'))
+        else:
+            print("username and/or password are incorrect, returning to menue")
+            welcome()
     return render_template('login.html')
+
+
+@app.route('/home',methods=['GET', 'POST'])
+def logged_in():
+    if request.method == 'POST':
+        return ('customer_profile.html')
+    return render_template('customer_profile.html')
+
+def do_query(query, want_output):
+    try:
+        output = cur.execute(query).fetchall()
+        conn.commit()
+        if want_output:
+            return output
+        else:
+            return True
+    except sqlite3.Error as er:
+        print("an error occured while attempting to perform a query")
+        if TEST:
+            print(er)
+        return False
 
 
 '''
@@ -321,10 +360,10 @@ def do_query(query, want_output):
             print(er)
         return False
 
-if TEST:
-    print(do_query("SELECT * FROM History", True))
-    print(do_query("SELECT * FROM Users WHERE username = 'a';", True))
-    shop('a',True)
+# if TEST:
+#     print(do_query("SELECT * FROM History", True))
+#     print(do_query("SELECT * FROM Users WHERE username = 'a';", True))
+#     shop('a',True)
 
 
 #welcome()
