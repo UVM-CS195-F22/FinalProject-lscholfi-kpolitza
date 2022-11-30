@@ -28,13 +28,28 @@ def login():
             #TODO: get the session variables to not display to user in browser
             session['username'] = username
             session['is_supplier'] = is_supplier
-             
-            return redirect(url_for('logged_in', username=username, is_supplier=is_supplier))
+            if is_supplier:
+                return redirect(url_for('supplier_logged_in', username=username, is_supplier=is_supplier))
+            elif not is_supplier:
+                return redirect(url_for('customer_logged_in', username=username, is_supplier=is_supplier))
+
     return render_template('login.html')
 
 
-@app.route('/home',methods=['GET', 'POST'])
-def logged_in():
+@app.route('/supplier_profile',methods=['GET', 'POST'])
+def supplier_logged_in():
+    #NOTE - dont think i need the line below, saving it for a little incase
+    #username = request.args['username']  # counterpart for url_for()
+    username = session['username'] 
+    is_supplier = session['is_supplier']
+    print('username: ',username)
+    print('is_supplier: ',is_supplier)
+    # if request.method == 'POST':
+    #     return redirect(url_for('balance', username=username, is_supplier=is_supplier))
+    return render_template('supplier_profile.html', username = username)
+
+@app.route('/customer_profile',methods=['GET', 'POST'])
+def customer_logged_in():
     #NOTE - dont think i need the line below, saving it for a little incase
     #username = request.args['username']  # counterpart for url_for()
     username = session['username'] 
@@ -43,11 +58,7 @@ def logged_in():
     print('is_supplier: ',is_supplier)
     if request.method == 'POST':
         return redirect(url_for('balance', username=username, is_supplier=is_supplier))
-
-    if is_supplier: 
-        return render_template('supplier_profile.html', username = username)
-    else:
-        return render_template('customer_profile.html', username = username)
+    return render_template('customer_profile.html', username = username)
 
 
 
