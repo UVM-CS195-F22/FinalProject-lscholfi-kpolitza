@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Landing{% endblock %}
+
+{% block content %}
+
+<div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
+  <p class="lead">Balance: {{user_balance}}</p>
+
+  <form method="POST">
+
+    <div><label>Add Amount <input type="text" name="add_balance_form" value="" /></label></div>
+    <div><label>Withdrawl Amount <input type="text" name="withdrawl_balance_form" value=""/></label></div>
+
+  </form>
+
+</div>
+
+{% endblock %}

@@ -6,10 +6,10 @@ conn = sqlite3.connect('super_store.db', check_same_thread=False)
 cur = conn.cursor()
 
 app = Flask(__name__)
-
+app.secret_key = 'verysecretkey'
+#app.run()
 #to run use
 #python -m flask run
-
 #connects to db
 TEST = True
 
@@ -22,18 +22,14 @@ def login():
 
         query = (f'''SELECT is_supplier FROM users WHERE username = '{username}' AND password = '{password}';''')
         login_attempt = do_query(query, True)
-        print("----------------")
-        print(login_attempt)
-        print("----------------")
-
         if len(login_attempt) == 1:
             print("Successfull Login")
             is_supplier = login_attempt[0][0]  
-            #TODO: get the session variables to work 
-            #session['username'] = username
-            #session['is_supplier'] = is_supplier
+            #TODO: get the session variables to not display to user in browser
+            session['username'] = username
+            session['is_supplier'] = is_supplier
              
-            return redirect(url_for('logged_in'))
+            return redirect(url_for('logged_in', username=username, is_supplier=is_supplier))
         else:
             print("username and/or password are incorrect, returning to menue")
             welcome()
@@ -42,23 +38,30 @@ def login():
 
 @app.route('/home',methods=['GET', 'POST'])
 def logged_in():
+    #NOTE - dont think i need the line below, saving it for a little incase
+    #username = request.args['username']  # counterpart for url_for()
+    username = session['username'] 
+    is_supplier = session['is_supplier']
+    print('username: ',username)
+    print('is_supplier: ',is_supplier)
     if request.method == 'POST':
-        return ('customer_profile.html')
-    return render_template('customer_profile.html')
+        return redirect(url_for('balance', username=username, is_supplier=is_supplier))
 
-def do_query(query, want_output):
-    try:
-        output = cur.execute(query).fetchall()
-        conn.commit()
-        if want_output:
-            return output
-        else:
-            return True
-    except sqlite3.Error as er:
-        print("an error occured while attempting to perform a query")
-        if TEST:
-            print(er)
-        return False
+    if is_supplier: 
+        return render_template('supplier_profile.html', username = username)
+    else:
+        return render_template('customer_profile.html', username = username)
+
+
+
+@app.route('/balance',methods=['GET', 'POST'])
+def balance():
+    username = session['username'] 
+    is_supplier = session['is_supplier']
+    user_balance = get_user_balance(username)
+
+    
+    return render_template('balance.html',user_balance=user_balance)
 
 
 '''

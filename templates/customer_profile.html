@@ -5,14 +5,17 @@
 {% block content %}
 
 <div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
-  <p class="lead">Customer Logged in successfull</p>
-  <p>{username}</p>
+
+
+
+<h1>Customer Logged in successfull</h1>
+<h3>Welcome {{username}}</h3>
+
 
   <form method="POST">
-    <div><label>Username <input type="text" name="username_form" value="" step="1" pattern="\d+" /></label></div>
-    <div><label>Password <input type="text" name="password_form" value="" step="1" pattern="\d+" /></label></div>
 
-    <input type="submit" value="Submit">
+    #TODO make buttons redirect to new html file AND function in app
+    <p><a href="{{url_for('balance')}}" ><button class=grey style="height:75px;width:150px">Manage balance</button></a></p>
   </form>
 
 </div>

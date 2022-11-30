@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Landing{% endblock %}
+
+{% block content %}
+
+<div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
+
+
+
+<h1>Supplier Logged in successfull</h1>
+<h3>Welcome {{username}}</h3>
+
+  <form method="POST">
+    #TODO make buttons redirect to new html file AND function in app
+    <p><a href="{{url_for('balance')}}" ><button class=grey style="height:75px;width:150px">Manage balance</button></a></p>
+  </form>
+
+</div>
+
+{% endblock %}
