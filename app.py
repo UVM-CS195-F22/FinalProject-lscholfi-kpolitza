@@ -87,7 +87,8 @@ def history():
 def resupply():
     username = session['username']
     is_supplier = session['is_supplier']
-    return render_template('resupply.html')
+    owned_items = get_owned_items(username)
+    return render_template('resupply.html',owned_products=owned_items)
 
 '''
 welcomes user to superstore website
@@ -114,7 +115,7 @@ allows user to restock existing items or add a new one
 input: None
 output: None
 '''
-def resupply(username):
+def restock(username):
     print("(1) to restock product")
     print("(2) to deliver a new item")
     choice = int(input("=> "))
@@ -368,6 +369,11 @@ def get_user_balance(username):
     return (int(balance[0][0]))
 
 
+def get_owned_items(username):
+    owned_products = cur.execute(f"SELECT Inventory.item_id, Inventory.item_name, Inventory.quantity FROM \
+                                     (Inventory INNER JOIN Users ON Users.username = Inventory.supplier) WHERE Inventory.supplier = Users.username \
+                                     AND Users.username = '{username}';").fetchall()
+    return (owned_products)
 
 '''
 performes a query on superstore.db
