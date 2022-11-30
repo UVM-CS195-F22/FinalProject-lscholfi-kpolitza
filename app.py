@@ -71,6 +71,13 @@ def history():
     is_supplier = session['is_supplier']
     return render_template('history.html')
 
+
+@app.route('/resupply', methods=['POST', 'GET'])
+def resupply():
+    username = session['username']
+    is_supplier = session['is_supplier']
+    return render_template('resupply.html')
+
 '''
 welcomes user to superstore website
 input: None
