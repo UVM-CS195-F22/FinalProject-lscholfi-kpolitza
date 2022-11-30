@@ -30,9 +30,6 @@ def login():
             session['is_supplier'] = is_supplier
              
             return redirect(url_for('logged_in', username=username, is_supplier=is_supplier))
-        else:
-            print("username and/or password are incorrect, returning to menue")
-            welcome()
     return render_template('login.html')
 
 
@@ -59,10 +56,20 @@ def balance():
     username = session['username'] 
     is_supplier = session['is_supplier']
     user_balance = get_user_balance(username)
-
-    
     return render_template('balance.html',user_balance=user_balance)
 
+@app.route('/shop',methods=['GET', 'POST'])
+def shop():
+    username = session['username'] 
+    is_supplier = session['is_supplier']
+    return render_template('shop.html')
+
+
+@app.route('/history',methods=['GET', 'POST'])
+def history():
+    username = session['username'] 
+    is_supplier = session['is_supplier']
+    return render_template('history.html')
 
 '''
 welcomes user to superstore website
