@@ -8,10 +8,13 @@
   <p class="lead">Balance: {{user_balance}}</p>
 
   <form method="POST">
+    <div><label>Add Amount <input type="number" name="add_balance_form" value="" /></label></div>
+    <input type="submit" value="Confirm Add">
+  </form>
 
-    <div><label>Add Amount <input type="text" name="add_balance_form" value="" /></label></div>
-    <div><label>Withdrawl Amount <input type="text" name="withdrawl_balance_form" value=""/></label></div>
-
+  <form method="POST">
+    <div><label>Withdrawl Amount <input type="number" name="withdrawl_balance_form" value=""/></label></div>
+    <input type="submit" value="Confirm Withdrawl">
   </form>
 
 </div>

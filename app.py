@@ -36,6 +36,16 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/return_to_home',methods=['GET', 'POST'])
+def return_to_home():
+    username = request.form.get("username_form", None)
+    is_supplier = session['is_supplier']
+    if is_supplier:
+        return redirect(url_for('supplier_logged_in', username=username, is_supplier=is_supplier))
+    else:
+        return redirect(url_for('customer_logged_in', username=username, is_supplier=is_supplier))
+
+
 @app.route('/supplier_profile',methods=['GET', 'POST'])
 def supplier_logged_in():
     #NOTE - dont think i need the line below, saving it for a little incase
@@ -66,7 +76,33 @@ def customer_logged_in():
 def balance():
     username = session['username'] 
     is_supplier = session['is_supplier']
-    user_balance = get_user_balance(username)
+    user_balance = int(get_user_balance(username))
+    if request.method == 'POST':
+        submission_message = ""
+        try:
+            amount = int(request.form.get("add_balance_form", None))
+            if amount <= 0:
+                submission_message += "You must add more than 0, try again\n"
+            else:
+                user_balance += amount
+        except Exception:
+            amount = int(request.form.get("withdrawl_balance_form", None))
+            if amount > user_balance:
+                submission_message += "You dont have enough funds, try again\n"
+            else:
+                user_balance -= amount
+        print(submission_message)
+        if submission_message == "":
+            query = (f'''UPDATE users
+                    SET credit = '{user_balance}'
+                    WHERE username = '{username}'
+                    ''')
+            success = do_query(query,False)
+            if success and submission_message == "":
+                submission_message += f"Success, your balance has been updated"
+            else:
+                submission_message += "an error has occured while changing balance amount, no changes occured to your balance"
+        return render_template('balance_submitted.html',user_balance=user_balance, submission_message=submission_message)
     return render_template('balance.html',user_balance=user_balance)
 
 @app.route('/shop',methods=['GET', 'POST'])
