@@ -6,7 +6,11 @@
 
 <div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
   <p class="lead">Resupply</p>
-  <p class="lead">Items: {{owned_products}}</p>
+  <p class="lead">Items:</p>
+
+  {% for item in owned_products %}
+    <p> {{ item }} </p>
+  {% endfor %}
 
   <form method="POST">
      <div><label>Item to restock: <input type="text" name="item" value="" /></label></div>

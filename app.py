@@ -373,7 +373,11 @@ def get_owned_items(username):
     owned_products = cur.execute(f"SELECT Inventory.item_id, Inventory.item_name, Inventory.quantity FROM \
                                      (Inventory INNER JOIN Users ON Users.username = Inventory.supplier) WHERE Inventory.supplier = Users.username \
                                      AND Users.username = '{username}';").fetchall()
-    return (owned_products)
+    formatted_products = []
+    for each in owned_products:
+        formatted_products.append(f"ID: '{each[0]}' Name: '{each[1]}' Quantity: '{each[2]}'")
+    
+    return (formatted_products)
 
 '''
 performes a query on superstore.db
