@@ -119,13 +119,6 @@ def history():
     return render_template('history.html')
 
 
-@app.route('/resupply', methods=['POST', 'GET'])
-def resupply():
-    username = session['username']
-    is_supplier = session['is_supplier']
-    owned_items = get_owned_items(username)
-    return render_template('resupply.html',owned_products=owned_items)
-
 '''
 welcomes user to superstore website
 input: None
@@ -144,6 +137,35 @@ def welcome():
         create_account()
     elif choice == 3:
         exit()
+
+
+@app.route('/resupply', methods=['POST', 'GET'])
+def resupply():
+    username = session['username']
+    is_supplier = session['is_supplier']
+    owned_items = get_owned_items(username)
+    submission_message = ""
+    quantity = 0
+    owned_list = cur.execute(f"SELECT Inventory.item_id, Inventory.item_name, Inventory.quantity FROM \
+                                     (Inventory INNER JOIN Users ON Users.username = Inventory.supplier) WHERE Inventory.supplier = Users.username \
+                                     AND Users.username = '{username}';").fetchall()
+
+    if request.method == "POST":
+        item = int(request.form.get("item_form", None))
+        amount = int(request.form.get("amount_form", None))
+        for each in owned_list:
+            if (each[0] == item):
+                quantity = int(each[2])
+        total = int(quantity) + int(amount)
+        query = "UPDATE Inventory SET quantity = " + str(total) + " WHERE item_id = " + str(item) + ";"
+        print(query)
+        cur.execute(query)
+        #success = do_query(query, False)
+        submission_message = "Stock updated successfully."
+        conn.commit()
+        owned_items = get_owned_items(username)
+        return render_template("resupply_submitted.html", owned_products=owned_items, submission_message=submission_message)
+    return render_template('resupply.html', owned_products=owned_items)
 
 
 '''

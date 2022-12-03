@@ -1,0 +1,19 @@
+{% block title %}Landing{% endblock %}
+
+{% block content %}
+
+<div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
+
+  {% for item in owned_products %}
+    <p> {{ item }} </p>
+  {% endfor %}
+  
+  <p>{{ submission_message }}</p>
+
+
+    <p><a href="{{ url_for('resupply') }}" ><button class=grey style="height:75px;width:150px">Restock</button></a></p>
+    <p><a href="{{ url_for('return_to_home') }}" ><button class=grey style="height:75px;width:150px">Home</button></a></p>
+
+</div>
+
+{% endblock %}
