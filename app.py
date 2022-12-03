@@ -36,6 +36,20 @@ def login():
     return render_template('login.html')
 
 
+#UNFINISHED
+@app.route('create_account', methods=['GET', 'POST'])
+def create_account():
+    username = request.form.get("username_form", None)
+    password = request.form.get("password_form", None)
+    supplier_or_customer = None
+    #RADIO BUTTON INPUT
+    if supplier_or_customer == 0:
+        is_supplier = False
+    elif supplier_or_customer == 1:
+        is_supplier = True
+    query = (f'''INSERT INTO users(username,password,credit,is_supplier) VALUES('{username}','{password}','0','{is_supplier}');''')
+
+
 @app.route('/return_to_home',methods=['GET', 'POST'])
 def return_to_home():
     username = request.form.get("username_form", None)
