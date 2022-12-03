@@ -116,7 +116,15 @@ def shop():
 def history():
     username = session['username'] 
     is_supplier = session['is_supplier']
-    return render_template('history.html')
+    submission_message = ""
+    if is_supplier == 0:
+        query = (f"SELECT History.order_id, History.date_time, Inventory.item_name, History.purchased FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
+        submission_message = "Purchase History"
+    elif is_supplier == 1:
+        query = (f"SELECT History.order_id, History.date_time, Inventory.item_name, History.added FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
+        submission_message = "Delivery History"
+    hist = do_query(query, True)
+    return render_template('history.html', history_list=hist, submission_message=submission_message)
 
 
 '''
@@ -164,6 +172,9 @@ def resupply():
         submission_message = "Stock updated successfully."
         conn.commit()
         owned_items = get_owned_items(username)
+        query = f"INSERT INTO History(item_id, date_time, user, added) VALUES('{item}', date('now','localtime'),'{username}','{amount}');"
+        cur.execute(query)
+        conn.commit()
         return render_template("resupply_submitted.html", owned_products=owned_items, submission_message=submission_message)
     return render_template('resupply.html', owned_products=owned_items)
 
