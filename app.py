@@ -470,6 +470,9 @@ def get_owned_items(username):
     
     return (formatted_products)
 
+
+    
+
 '''
 performes a query on superstore.db
 input: query the query to be processed, want_output bool if query output is needed or just a success flag is needed
