@@ -168,6 +168,28 @@ def resupply():
     return render_template('resupply.html', owned_products=owned_items)
 
 
+@app.route('/add_product', methods=['GET', 'POST'])
+def add_product():
+    username = session['username']
+    is_supplier = session['is_supplier']
+    owned_items = get_owned_items(username)
+    submission_message = ""
+    
+    if request.method == "POST":
+        name = str(request.form.get("name_form", None))
+        quantity = str(request.form.get("quantity_form", None))
+        cost = str(request.form.get("price_form", None))
+        query = f"INSERT INTO Inventory (item_name, cost, quantity, supplier) VALUES ('" + \
+            name + "', " + str(cost) + ", " + str(quantity) + \
+            ", '" + str(username) + "');"
+        cur.execute(query)
+        conn.commit()
+        submission_message = "Product added successfully."
+        owned_items = get_owned_items(username)
+        return render_template("add_product_submitted.html", owned_products=owned_items, submission_message=submission_message)
+    return render_template("add_product.html", owned_products=owned_items)
+    
+    
 '''
 allows user to restock existing items or add a new one
 input: None

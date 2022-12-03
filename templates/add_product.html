@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Landing{% endblock %}
+
+{% block content %}
+
+<div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
+  <h1>Add New Item</h1>
+  <p class="lead">Items:</p>
+
+  {% for item in owned_products %}
+    <p> {{ item }} </p>
+  {% endfor %}
+
+  <form method="POST">
+     <div><label>Name of Item: <input type="text" name="name_form" value="" /></label></div>
+     <div><label>Price of Item: <input type="number" name="price_form" value="" step="any" /></label></div>
+     <div><label>Quantity of Item: <input type="number" name="quantity_form" value=""/></label></div>
+     <input type="submit" value="Add">
+  </form>
+
+</div>
+
+{% endblock %}
