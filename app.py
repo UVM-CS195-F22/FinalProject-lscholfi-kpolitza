@@ -37,7 +37,7 @@ def login():
 
 
 #UNFINISHED
-@app.route('create_account', methods=['GET', 'POST'])
+@app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     username = request.form.get("username_form", None)
     password = request.form.get("password_form", None)
@@ -119,11 +119,6 @@ def balance():
         return render_template('balance_submitted.html',user_balance=user_balance, submission_message=submission_message)
     return render_template('balance.html',user_balance=user_balance)
 
-@app.route('/shop',methods=['GET', 'POST'])
-def shop():
-    username = session['username'] 
-    is_supplier = session['is_supplier']
-    return render_template('shop.html')
 
 
 @app.route('/history',methods=['GET', 'POST'])
@@ -213,7 +208,56 @@ def add_product():
         owned_items = get_owned_items(username)
         return render_template("add_product_submitted.html", owned_products=owned_items, submission_message=submission_message)
     return render_template("add_product.html", owned_products=owned_items)
+
+@app.route('/shop', methods=['GET', 'POST'])
+def shop():
+    username = session['username']
+    is_supplier = session['is_supplier']
+    user_balance = get_user_balance(username)
+    submission_message = ""
+    query = f'''SELECT * FROM Inventory;'''
+    inventory = do_query(query, True)
     
+        
+    owned_products = []
+    for each in inventory:
+        owned_products.append(f"ID: {each[0]} Name: {each[1]} Quantity: {each[3]} Price: {each[2]}$")
+    
+    if request.method == "POST":
+        item = int(request.form.get("item", None))
+        item -= 1
+        quantity = int(request.form.get("quantity", None))
+        try:
+            if float(inventory[item][3]) < quantity:
+                submission_message += "there are not enough items in stock, returning to menue\n"
+            new_quantity = (int(inventory[item][3]) - quantity)
+            total_cost = float(inventory[item][2]) * quantity
+            if total_cost > user_balance:
+                submission_message += "You dont have sufficient funds, returning to menue\n"
+                user_balance -= total_cost
+        except Exception:
+            submission_message += "A non valid item was chosen\n"
+        if submission_message == "":
+            user_query = f'''UPDATE users SET credit = '{user_balance}' WHERE username = '{username}';'''
+            history_query = f'''INSERT INTO History(item_id,date_time, user, purchased) VALUES('{item}', date('now','localtime'),'{username}','{quantity}');'''
+            inventory_query = ("UPDATE Inventory SET quantity = " + str(new_quantity) + " WHERE item_id = '" + str(item+1) + "';")
+            query_h = do_query(history_query,False)
+            query_u = do_query(user_query,False)
+            query_i = do_query(inventory_query, False)
+            if query_h and query_u and query_i:
+                submission_message +="Purchase successfull, returning to menue\n"
+            else:
+                submission_message +="Purchase fail, returning to menue\n"
+     
+        return render_template("shop_submitted.html",submission_message=submission_message)
+    return render_template("shop.html", owned_products=owned_products)
+
+
+
+    
+
+    
+
     
 '''
 allows user to restock existing items or add a new one
@@ -402,7 +446,7 @@ allows user to veiw online inventory and purchase items
 input: Username
 output: None
 '''
-def shop(username,is_supplier):
+def shop_old(username,is_supplier):
     user_balance = get_user_balance(username)
 
     query = f'''SELECT * FROM Inventory;'''
@@ -450,9 +494,6 @@ def shop(username,is_supplier):
         print("canceling purchase, returning you to main menue")
         logged_in(username,is_supplier)
 
-
-    
-
     return 0
 
 '''
@@ -480,7 +521,7 @@ def get_owned_items(username):
                                      AND Users.username = '{username}';").fetchall()
     formatted_products = []
     for each in owned_products:
-        formatted_products.append(f"ID: '{each[0]}' Name: '{each[1]}' Quantity: '{each[2]}'")
+        formatted_products.append(f"ID: {each[0]} Name: {each[1]} Quantity: {each[2]}")
     
     return (formatted_products)
 

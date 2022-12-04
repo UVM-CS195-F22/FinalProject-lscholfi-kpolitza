@@ -8,13 +8,13 @@
   <p class="lead">Enter credentials below to log in</p>
 
   <form method="POST">
-    <div><label>Username <input type="text" name="username_form" value="" /></label></div>
-    <div><label>Password <input type="text" name="password_form" value="" /></label></div>
+    <div><label>Username <input type="text" name="username_form" value="" required /></label></div>
+    <div><label>Password <input type="text" name="password_form" value="" required /></label></div>
 
     <input type="submit" value="Log In">
   </form>
 
-  <p><a href="{{ url_for('create_account') }}" ><button class=grey style="height:75px;width:150px">Create Account</button></a></p>
+  <p><a href="{{ url_for('create_account') }}" ><button class=grey style="height:75px;width:150px;margin-top:25px">Create Account</button></a></p>
 
 </div>
 
