@@ -215,7 +215,7 @@ def shop():
     is_supplier = session['is_supplier']
     user_balance = get_user_balance(username)
     submission_message = ""
-    query = f'''SELECT * FROM Inventory;'''
+    query = f'''SELECT * FROM Inventory WHERE quantity > 0;'''
     inventory = do_query(query, True)
     
         
