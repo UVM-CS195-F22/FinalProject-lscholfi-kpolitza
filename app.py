@@ -39,15 +39,25 @@ def login():
 #UNFINISHED
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
-    username = request.form.get("username_form", None)
-    password = request.form.get("password_form", None)
-    supplier_or_customer = None
-    #RADIO BUTTON INPUT
-    if supplier_or_customer == 0:
-        is_supplier = False
-    elif supplier_or_customer == 1:
-        is_supplier = True
-    query = (f'''INSERT INTO users(username,password,credit,is_supplier) VALUES('{username}','{password}','0','{is_supplier}');''')
+    if request.method == "POST":
+        username = request.form.get("username_form", None)
+        password = request.form.get("password_form", None)
+        supplier_or_customer = int(request.form.get("is_supplier"))
+        #RADIO BUTTON INPUT
+        if supplier_or_customer == 0:
+            is_supplier = 0
+        elif supplier_or_customer == 1:
+            is_supplier = 1
+        query = (f'''INSERT INTO users(username,password,credit,is_supplier) VALUES('{username}','{password}','0','{is_supplier}');''')
+        cur.execute(query)
+        conn.commit()
+        session['username'] = username
+        session['is_supplier'] = is_supplier
+        if is_supplier == 1:
+            return redirect(url_for('supplier_logged_in', username=username, is_supplier=is_supplier))
+        elif is_supplier == 0:
+            return redirect(url_for('customer_logged_in', username=username, is_supplier=is_supplier))
+    return render_template('create_account.html')
 
 
 @app.route('/return_to_home',methods=['GET', 'POST'])
