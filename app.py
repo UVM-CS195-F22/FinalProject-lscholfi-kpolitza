@@ -36,6 +36,10 @@ def login():
             return render_template('login.html',failed_login_message=failed_login_message)
     return render_template('login.html',failed_login_message=failed_login_message)
 
+@app.route('/metrics', methods=['GET', 'POST'])
+def metrics():
+        return render_template('metrics.html')
+
 
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():

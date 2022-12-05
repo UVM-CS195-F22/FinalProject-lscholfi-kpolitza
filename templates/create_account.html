@@ -9,12 +9,12 @@
   <p class="lead">Enter credentials below to create a new account</p>
 
   <form method="POST">
-    <div><label>Username <input type="text" name="username_form" value="" /></label></div>
-    <div><label>Password <input type="text" name="password_form" value="" /></label></div>
+    <div><label>Username <input type="text" name="username_form" value=""required /></label></div>
+    <div><label>Password <input type="text" name="password_form" value="" required/></label></div>
     <p>Are you a supplier or a customer?:</p>
     <input type="radio" id="supp" name="is_supplier" value="1">
     <label for="supp">Supplier</label><br>
-    <input type="radio" id="cust" name="is_supplier" value="0">
+    <input type="radio" id="cust" name="is_supplier" value="0" >
     <label for="cust">Customer</label><br>
 
     <input type="submit" value="Create Account">
