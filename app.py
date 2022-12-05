@@ -38,7 +38,6 @@ def login():
     return render_template('login.html',failed_login_message=failed_login_message)
 
 
-#UNFINISHED
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == "POST":
