@@ -52,10 +52,10 @@ def metrics():
         cust_out = [item for t in cust_credit for item in t]
         
         df = pd.DataFrame()
-        df['supplier_credit'] = supp_out
-        #df['customer_credit'] = cust_out
+        #df['supplier_credit'] = supp_out
+        df['customer_credit'] = cust_out
         
-        fig = px.histogram(df, x="supplier_credit")
+        fig = px.histogram(df, x="customer_credit", nbins=10)
         
         fig.show()
         
