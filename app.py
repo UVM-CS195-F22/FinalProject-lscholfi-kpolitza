@@ -1,6 +1,11 @@
 #imports
 import sqlite3
 from flask import Flask, render_template, request, url_for, redirect, session
+import json
+import plotly
+from plotly import data
+import plotly.express as px
+import pandas as pd
 
 conn = sqlite3.connect('super_store.db', check_same_thread=False)
 cur = conn.cursor()
@@ -38,6 +43,22 @@ def login():
 
 @app.route('/metrics', methods=['GET', 'POST'])
 def metrics():
+        query_suppliers = "SELECT credit FROM users WHERE is_supplier = 1;"
+        query_customers = "SELECT credit FROM users WHERE is_supplier = 0;"
+        supp_credit = cur.execute(query_suppliers).fetchall()
+        cust_credit = cur.execute(query_customers).fetchall()
+        #list comprehension
+        supp_out = [item for t in supp_credit for item in t]
+        cust_out = [item for t in cust_credit for item in t]
+        
+        df = pd.DataFrame()
+        df['supplier_credit'] = supp_out
+        #df['customer_credit'] = cust_out
+        
+        fig = px.histogram(df, x="supplier_credit")
+        
+        fig.show()
+        
         return render_template('metrics.html')
 
 
