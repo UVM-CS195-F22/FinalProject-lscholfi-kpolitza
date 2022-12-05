@@ -36,7 +36,6 @@ def login():
     return render_template('login.html')
 
 
-#UNFINISHED
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == "POST":
