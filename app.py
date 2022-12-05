@@ -15,7 +15,7 @@ TEST = True
 
 
 @app.route('/',methods=['GET', 'POST'])
-def login():
+def login():  
     failed_login_message = ""
     if request.method == 'POST':
         username = request.form.get("username_form", None)
@@ -25,7 +25,6 @@ def login():
         login_attempt = do_query(query, True)
         if len(login_attempt) == 1:
             is_supplier = login_attempt[0][0]  
-            #TODO: get the session variables to not display to user in browser
             session['username'] = username
             session['is_supplier'] = is_supplier
             if is_supplier:
