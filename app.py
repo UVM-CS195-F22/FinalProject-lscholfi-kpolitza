@@ -16,6 +16,7 @@ TEST = True
 
 @app.route('/',methods=['GET', 'POST'])
 def login():
+    failed_login_message = ""
     if request.method == 'POST':
         username = request.form.get("username_form", None)
         password = request.form.get("password_form", None)
@@ -23,7 +24,6 @@ def login():
         query = (f'''SELECT is_supplier FROM users WHERE username = '{username}' AND password = '{password}';''')
         login_attempt = do_query(query, True)
         if len(login_attempt) == 1:
-            print("Successfull Login")
             is_supplier = login_attempt[0][0]  
             #TODO: get the session variables to not display to user in browser
             session['username'] = username
@@ -32,8 +32,10 @@ def login():
                 return redirect(url_for('supplier_logged_in', username=username, is_supplier=is_supplier))
             elif not is_supplier:
                 return redirect(url_for('customer_logged_in', username=username, is_supplier=is_supplier))
-
-    return render_template('login.html')
+        else:
+            failed_login_message = "login failed, username or password are incorrect"
+            return render_template('login.html',failed_login_message=failed_login_message)
+    return render_template('login.html',failed_login_message=failed_login_message)
 
 
 #UNFINISHED
@@ -244,6 +246,7 @@ def shop():
             total_cost = float(inventory[item][2]) * quantity
             if total_cost > user_balance:
                 submission_message += "You dont have sufficient funds, returning to menue\n"
+            else:
                 user_balance -= total_cost
         except Exception:
             submission_message += "A non valid item was chosen\n"
