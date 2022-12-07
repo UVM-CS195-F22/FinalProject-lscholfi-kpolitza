@@ -205,6 +205,7 @@ def balance():
 @app.route('/history',methods=['GET', 'POST'])
 def history():
     username = session['username'] 
+    print(do_query("SELECT * FROM HISTORY WHERE user = 'a'", True))
     is_supplier = session['is_supplier']
     submission_message = ""
     if is_supplier == 0:
@@ -214,6 +215,7 @@ def history():
         query = (f"SELECT History.order_id, History.date_time, Inventory.item_name, History.added FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
         submission_message = "Delivery History"
     hist = do_query(query, True)
+    print(hist)
     return render_template('history.html', history_list=hist, submission_message=submission_message)
 
 
@@ -306,8 +308,9 @@ def shop():
             submission_message += "A non valid item was chosen\n"
         if submission_message == "":
             user_query = f'''UPDATE users SET credit = '{user_balance}' WHERE username = '{username}';'''
+            item += 1
             history_query = f'''INSERT INTO History(item_id,date_time, user, purchased) VALUES('{item}', date('now','localtime'),'{username}','{quantity}');'''
-            inventory_query = ("UPDATE Inventory SET quantity = " + str(new_quantity) + " WHERE item_id = '" + str(item+1) + "';")
+            inventory_query = ("UPDATE Inventory SET quantity = " + str(new_quantity) + " WHERE item_id = '" + str(item) + "';")
             query_h = do_query(history_query,False)
             query_u = do_query(user_query,False)
             query_i = do_query(inventory_query, False)
