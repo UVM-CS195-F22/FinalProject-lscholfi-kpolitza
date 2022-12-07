@@ -207,10 +207,10 @@ def history():
     is_supplier = session['is_supplier']
     submission_message = ""
     if is_supplier == 0:
-        query = (f"SELECT History.order_id, History.date_time, Inventory.item_name, History.purchased FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
+        query = (f"SELECT History.date_time, Inventory.item_name, History.purchased FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
         submission_message = "Purchase History"
     elif is_supplier == 1:
-        query = (f"SELECT History.order_id, History.date_time, Inventory.item_name, History.added FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
+        query = (f"SELECT History.date_time, Inventory.item_name, History.added FROM (History INNER JOIN Inventory ON Inventory.item_id = History.item_id) WHERE user = '{username}';")
         submission_message = "Delivery History"
     hist = do_query(query, True)
     print(hist)
@@ -258,7 +258,8 @@ def add_product():
     
     if request.method == "POST":
         name = str(request.form.get("name_form", None))
-        quantity = str(request.form.get("quantity_form", None))
+        #quantity = str(request.form.get("quantity_form", None))
+        quantity = 0
         cost = str(request.form.get("price_form", None))
         query = f"INSERT INTO Inventory (item_name, cost, quantity, supplier) VALUES ('" + \
             name + "', " + str(cost) + ", " + str(quantity) + \
