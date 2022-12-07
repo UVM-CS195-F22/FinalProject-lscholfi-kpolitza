@@ -227,26 +227,30 @@ def resupply():
     owned_list = cur.execute(f"SELECT Inventory.item_id, Inventory.item_name, Inventory.quantity FROM \
                                      (Inventory INNER JOIN Users ON Users.username = Inventory.supplier) WHERE Inventory.supplier = Users.username \
                                      AND Users.username = '{username}';").fetchall()
-
+    print(owned_list)
     if request.method == "POST":
         item = int(request.form.get("item_form", None))
-        amount = int(request.form.get("amount_form", None))
-        for each in owned_list:
-            if (each[0] == item):
-                quantity = int(each[2])
-        total = int(quantity) + int(amount)
-        query = "UPDATE Inventory SET quantity = " + str(total) + " WHERE item_id = " + str(item) + ";"
-        print(query)
-        cur.execute(query)
-        #success = do_query(query, False)
-        submission_message = "Stock updated successfully."
-        conn.commit()
-        owned_items = get_owned_items(username)
-        query = f"INSERT INTO History(item_id, date_time, user, added) VALUES('{item}', date('now','localtime'),'{username}','{amount}');"
-        cur.execute(query)
-        conn.commit()
-        return render_template("resupply_submitted.html", owned_products=owned_items, submission_message=submission_message)
-    return render_template('resupply.html', owned_products=owned_items)
+        for i in owned_list:
+            if i[0] == item:
+                amount = int(request.form.get("amount_form", None))
+                for each in owned_list:
+                    if (each[0] == item):
+                        quantity = int(each[2])
+                total = int(quantity) + int(amount)
+                query = "UPDATE Inventory SET quantity = " + str(total) + " WHERE item_id = " + str(item) + ";"
+                print(query)
+                cur.execute(query)
+                #success = do_query(query, False)
+                submission_message = "Stock updated successfully."
+                conn.commit()
+                owned_items = get_owned_items(username)
+                query = f"INSERT INTO History(item_id, date_time, user, added) VALUES('{item}', date('now','localtime'),'{username}','{amount}');"
+                cur.execute(query)
+                conn.commit()
+                return render_template("resupply_submitted.html", owned_products=owned_items, submission_message=submission_message)
+            else:
+                submission_message = "Item is not in your catalogue."
+    return render_template('resupply.html', owned_products=owned_items, submission_message=submission_message)
 
 
 @app.route('/add_product', methods=['GET', 'POST'])

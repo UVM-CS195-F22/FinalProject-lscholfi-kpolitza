@@ -12,6 +12,9 @@
     <p> {{ item }} </p>
   {% endfor %}
 
+
+  <p>{{ submission_message }}</p>
+  
   <form method="POST">
      <div><label>ID of Item to restock: <input type="number" name="item_form" value="" required/></label></div>
      <div><label>Quantity of Item: <input type="number" name="amount_form" value="" required/></label></div>
