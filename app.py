@@ -62,6 +62,27 @@ def metrics():
         return render_template('metrics.html')
 
 
+@app.route('/metrics2', methods=['GET', 'POST'])
+def metrics2():
+    query_id = "SELECT item_id FROM inventory;"
+    query_cost = "SELECT cost FROM inventory;"
+    id_list = cur.execute(query_id).fetchall()
+    cost_list = cur.execute(query_cost).fetchall()
+    #list comprehension
+    id_out = [item for t in id_list for item in t]
+    cost_out = [item for t in cost_list for item in t]
+
+    df = pd.DataFrame()
+    df['id'] = id_out
+    df['cost'] = cost_out
+
+    fig = px.scatter(df, x="id", y="cost")
+
+    fig.show()
+
+    return render_template('metrics2.html')
+
+
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == "POST":
