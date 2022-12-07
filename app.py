@@ -16,7 +16,6 @@ app.secret_key = 'verysecretkey'
 #to run use
 #python -m flask run
 #connects to db
-TEST = True
 
 
 @app.route('/',methods=['GET', 'POST'])
@@ -62,7 +61,6 @@ def metrics():
     cust_out = [item for t in cust_credit for item in t]
     
     df = pd.DataFrame()
-    #df['supplier_credit'] = supp_out
     df['customer_credit'] = cust_out
     
     fig = px.histogram(df, x="customer_credit", nbins=10)
@@ -368,6 +366,4 @@ def do_query(query, want_output):
             return True
     except sqlite3.Error as er:
         print("an error occured while attempting to perform a query")
-        if TEST:
-            print(er)
         return False
