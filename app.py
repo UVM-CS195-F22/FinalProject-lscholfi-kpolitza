@@ -277,7 +277,7 @@ def shop():
         
     owned_products = []
     for each in inventory:
-        owned_products.append(f"ID: {each[0]} Name: {each[1]} Quantity: {each[3]} Price: {each[2]}$")
+        owned_products.append(f"ID: {each[0]} Name: {each[1]} Quantity: {each[3]} Price: ${each[2]}")
     
     if request.method == "POST":
         item = int(request.form.get("item", None))
