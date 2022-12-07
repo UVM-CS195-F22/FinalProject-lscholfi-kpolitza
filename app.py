@@ -42,7 +42,7 @@ def login():
     return render_template('login.html',failed_login_message=failed_login_message)
 
 @app.route('/metrics', methods=['GET', 'POST'])
-def metrics():
+def metrics(): 
         query_suppliers = "SELECT credit FROM users WHERE is_supplier = 1;"
         query_customers = "SELECT credit FROM users WHERE is_supplier = 0;"
         supp_credit = cur.execute(query_suppliers).fetchall()
@@ -341,7 +341,7 @@ def restock(username):
             query = f"INSERT INTO Inventory (item_name, cost, quantity, supplier) VALUES ('" + name + "', " + str(cost) + ", " + str(quantity) + ", '" + str(username) + "');"
             cur.execute(query)
             conn.commit()
-            print("Product added")
+            
             print("(2) to add another item")
             print("(3) to exit")
             choice = int(input("=> "))
